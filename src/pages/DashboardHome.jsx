@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Home.css';
 
-function Home() {
+function DashboardHome() {
     const navigate = useNavigate();
     const [searchType, setSearchType] = useState('buy');
     const [searchLocation, setSearchLocation] = useState('');
@@ -35,9 +35,9 @@ function Home() {
                     <div className="navbar-nav">
                         <button
                             className="btn btn-outline-light me-2"
-                            onClick={() => navigate('/login')}
+                            onClick={() => navigate('/dashboard')}
                         >
-                            Login / Register
+                            Dashboard
                         </button>
                         <button
                             className="btn btn-warning"
@@ -175,4 +175,4 @@ function Home() {
     );
 }
 
-export default Home;
+export default DashboardHome;

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/Auth.css';
 
@@ -9,11 +9,25 @@ function Register() {
         email: '',
         password: '',
         confirmPassword: '',
+        role: 'CLIENT', // Default role
+        licenseNumber: '' // For agents
     });
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
+
+    // Set role and license from navigation state if coming from landing page
+    useEffect(() => {
+        if (location.state?.selectedRole) {
+            setFormData(prev => ({
+                ...prev,
+                role: location.state.selectedRole,
+                licenseNumber: location.state.licenseNumber || ''
+            }));
+        }
+    }, [location.state]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -59,12 +73,20 @@ function Register() {
         setLoading(true);
 
         try {
-            // Updated to use the 3 fields your servlet expects
-            await axios.post('http://localhost:8081/RealStatePro/register', {
+            // Prepare registration data
+            const registrationData = {
                 username: formData.username,
                 email: formData.email,
-                password: formData.password
-            }, {
+                password: formData.password,
+                role: formData.role
+            };
+
+            // Add license number for agents
+            if (formData.role === 'AGENT') {
+                registrationData.licenseNumber = formData.licenseNumber;
+            }
+
+            await axios.post('http://localhost:8081/RealStatePro/register', registrationData, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -151,6 +173,40 @@ function Register() {
                             placeholder="Confirm your password"
                         />
                     </div>
+
+                    <div className="form-group">
+                        <label htmlFor="role">I want to register as:</label>
+                        <select
+                            id="role"
+                            name="role"
+                            value={formData.role}
+                            onChange={handleChange}
+                            className="form-control"
+                            required
+                        >
+                            <option value="CLIENT">Client - Looking for Properties</option>
+                            <option value="AGENT">Agent - Listing Properties</option>
+                        </select>
+                    </div>
+
+                    {formData.role === 'AGENT' && (
+                        <div className="form-group">
+                            <label htmlFor="licenseNumber">Real Estate License Number</label>
+                            <input
+                                type="text"
+                                id="licenseNumber"
+                                name="licenseNumber"
+                                value={formData.licenseNumber}
+                                onChange={handleChange}
+                                required
+                                placeholder="Enter your license number"
+                                className="form-control"
+                            />
+                            <small className="form-text text-muted">
+                                Your license will be verified by our organization
+                            </small>
+                        </div>
+                    )}
 
                     <div className="terms">
                         <input type="checkbox" id="terms" required />
