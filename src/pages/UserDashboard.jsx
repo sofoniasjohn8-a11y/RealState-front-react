@@ -1,48 +1,59 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Outlet } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import '../styles/UserDashboard.css';
 
 function UserDashboard() {
     const navigate = useNavigate();
-
-    // Get user data from localStorage
-    const userData = JSON.parse(localStorage.getItem('user') || '{}');
-    const { username, userId } = userData;
+    const { user, logout } = useAuth();
 
     const handleLogout = () => {
-        localStorage.removeItem('user');
+        logout();
         navigate('/');
-        window.location.reload();
     };
 
     const menuItems = [
         {
             id: 'home',
             title: 'Home',
-            description: 'Browse and search properties',
+            description: 'Dashboard overview',
             icon: '🏠',
-            path: '/dashboard/home'
+            path: '/dashboard'
+        },
+        {
+            id: 'select-agent',
+            title: 'Select Agent',
+            description: 'Choose your agent',
+            icon: '👥',
+            path: '/dashboard/select-agent'
         },
         {
             id: 'requests',
-            title: 'My Requests Status',
-            description: 'View and track your property requests',
+            title: 'My Requests',
+            description: 'Track requests',
             icon: '📋',
-            path: '/my-requests'
+            path: '/dashboard/requests'
         },
         {
             id: 'orders',
             title: 'Orders',
-            description: 'View your property orders and transactions',
+            description: 'View transactions',
             icon: '🛒',
-            path: '/orders'
+            path: '/dashboard/orders'
+        },
+        {
+            id: 'custom-request',
+            title: 'Custom Request',
+            description: 'New property request',
+            icon: '📝',
+            path: '/dashboard/custom-request'
         },
         {
             id: 'change-password',
             title: 'Change Password',
-            description: 'Update your account password',
+            description: 'Update password',
             icon: '🔒',
-            path: '/change-password'
+            path: '/dashboard/change-password'
         }
     ];
 
@@ -80,8 +91,8 @@ function UserDashboard() {
                                 <span className="avatar-icon">👤</span>
                             </div>
                             <div className="user-details">
-                                <h5 className="username">{username || 'User'}</h5>
-                                <p className="user-id">ID: {userId || 'N/A'}</p>
+                                <h5 className="username">{user?.username || 'User'}</h5>
+                                <p className="user-id">ID: {user?.userId || 'N/A'}</p>
                             </div>
                         </div>
 
@@ -104,7 +115,7 @@ function UserDashboard() {
                             </ul>
                         </nav>
 
-                        <div className="sidebar-footer">
+                        {/* <div className="sidebar-footer">
                             <button
                                 className="btn btn-danger logout-btn"
                                 onClick={handleLogout}
@@ -112,74 +123,30 @@ function UserDashboard() {
                                 <span className="logout-icon">🚪</span>
                                 Logout
                             </button>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
 
                 {/* Main Content Area - 8 columns on medium screens and up */}
                 <div className="col-md-8 main-content">
-                    <div className="content-header">
-                        <h2>Welcome to Your Dashboard</h2>
-                        <p>Manage your real estate activities and account settings</p>
-                    </div>
+                    <Outlet />
+                </div>
+            </div>
 
-                    <div className="dashboard-overview">
-                        <div className="row">
-                            <div className="col-md-6 col-lg-4 mb-4">
-                                <div className="stat-card">
-                                    <div className="stat-icon">📋</div>
-                                    <div className="stat-content">
-                                        <h4>Active Requests</h4>
-                                        <p className="stat-number">0</p>
-                                        <p className="stat-description">Property requests in progress</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="col-md-6 col-lg-4 mb-4">
-                                <div className="stat-card">
-                                    <div className="stat-icon">🛒</div>
-                                    <div className="stat-content">
-                                        <h4>Total Orders</h4>
-                                        <p className="stat-number">0</p>
-                                        <p className="stat-description">Completed property transactions</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="col-md-6 col-lg-4 mb-4">
-                                <div className="stat-card">
-                                    <div className="stat-icon">⭐</div>
-                                    <div className="stat-content">
-                                        <h4>Account Status</h4>
-                                        <p className="stat-status active">Active</p>
-                                        <p className="stat-description">Your account is in good standing</p>
-                                    </div>
-                                </div>
-                            </div>
+            <footer className="dashboard-footer">
+                <div className="container-fluid">
+                    <div className="row">
+                        <div className="col-md-6">
+                            <p className="mb-0">© 2026 Real Estate Dashboard. All rights reserved.</p>
                         </div>
-                    </div>
-
-                    <div className="recent-activity">
-                        <h3>Recent Activity</h3>
-                        <div className="activity-list">
-                            <div className="activity-item">
-                                <div className="activity-icon">🔐</div>
-                                <div className="activity-content">
-                                    <p className="activity-title">Account Login</p>
-                                    <p className="activity-time">Just now</p>
-                                </div>
-                            </div>
-                            <div className="activity-item empty">
-                                <div className="activity-content">
-                                    <p className="activity-title">No recent property activities</p>
-                                    <p className="activity-description">Start by browsing properties or making a request</p>
-                                </div>
-                            </div>
+                        <div className="col-md-6 text-md-end">
+                            <p className="mb-0">
+                                Welcome back, {user?.username || 'User'}
+                            </p>
                         </div>
                     </div>
                 </div>
-            </div>
+            </footer>
         </div>
     );
 }

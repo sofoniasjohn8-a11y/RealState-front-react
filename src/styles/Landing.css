@@ -93,6 +93,13 @@
     color: rgba(255,255,255,0.8);
 }
 
+/* Role Selection Section */
+.role-selection-section {
+    background: #f8f9fa;
+    padding: 4rem 0;
+    min-height: auto;
+}
+
 /* Role Selection Card */
 .role-selection-card {
     background: rgba(255,255,255,0.95);
@@ -100,7 +107,7 @@
     border-radius: 20px;
     padding: 2rem;
     box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-    margin-left: 2rem;
+    margin-left: 0;
     max-width: 500px;
 }
 

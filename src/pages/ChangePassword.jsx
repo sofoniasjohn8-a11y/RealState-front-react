@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useAuth } from '../contexts/AuthContext';
+import { API_BASE, buildAuthHeaders } from '../utils/api';
 
 function ChangePassword() {
     const navigate = useNavigate();
+    const { user } = useAuth();
     const [formData, setFormData] = useState({
         currentPassword: '',
         newPassword: '',
@@ -53,19 +55,20 @@ function ChangePassword() {
         }
 
         try {
-            // Get user data for authentication
-            const userData = JSON.parse(localStorage.getItem('user') || '{}');
-
-            await axios.post('http://localhost:8081/RealStatePro/api/user/change-password', {
-                userId: userData.userId,
-                currentPassword: formData.currentPassword,
-                newPassword: formData.newPassword
-            }, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userData.token}`
-                }
+            const response = await fetch(`${API_BASE}/user/change-password`, {
+                method: 'POST',
+                headers: buildAuthHeaders(user?.token),
+                body: JSON.stringify({
+                    userId: user.userId,
+                    currentPassword: formData.currentPassword,
+                    newPassword: formData.newPassword
+                })
             });
+
+            const result = await response.json().catch(() => null);
+            if (!response.ok) {
+                throw new Error(result?.message || 'Failed to change password. Please try again.');
+            }
 
             setSuccess('Password changed successfully!');
             setFormData({
@@ -78,7 +81,7 @@ function ChangePassword() {
                 navigate('/dashboard');
             }, 2000);
         } catch (err) {
-            setError(err.response?.data?.message || 'Failed to change password. Please try again.');
+            setError(err.message || 'Failed to change password. Please try again.');
             console.error('Password change error:', err);
         } finally {
             setLoading(false);

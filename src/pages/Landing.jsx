@@ -92,34 +92,44 @@ function Landing() {
                                     </div>
                                 </div>
                             </div>
-                            <div className="col-lg-6">
-                                <div className="role-selection-card">
-                                    {!showLicenseInput ? (
-                                        <>
-                                            <h2 className="role-title">Join Our Community</h2>
-                                            <p className="role-subtitle">Choose your role to get started</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-                                            <div className="role-options">
-                                                <div className="role-card client-card" onClick={() => handleRoleSelect('CLIENT')}>
-                                                    <div className="role-icon">🏠</div>
-                                                    <h3>I'm Looking for Properties</h3>
-                                                    <p>Find your dream home, browse listings, and connect with agents</p>
-                                                    <button className="btn btn-primary role-btn">
-                                                        Register as Client
-                                                    </button>
-                                                </div>
+            {/* Role Selection Section */}
+            <section className="role-selection-section">
+                <div className="container">
+                    <div className="row justify-content-center">
+                        <div className="col-lg-6">
+                            <div className="role-selection-card">
+                                {!showLicenseInput ? (
+                                    <>
+                                        <h2 className="role-title">Join Our Community</h2>
+                                        <p className="role-subtitle">Choose your role to get started</p>
 
-                                                <div className="role-card agent-card" onClick={() => handleRoleSelect('AGENT')}>
-                                                    <div className="role-icon">👨‍💼</div>
-                                                    <h3>I'm a Real Estate Agent</h3>
-                                                    <p>List properties, manage clients, and grow your business</p>
-                                                    <button className="btn btn-success role-btn">
-                                                        Register as Agent
-                                                    </button>
-                                                </div>
+                                        <div className="role-options">
+                                            <div className="role-card client-card" onClick={() => handleRoleSelect('CLIENT')}>
+                                                <div className="role-icon">🏠</div>
+                                                <h3>I'm Looking for Properties</h3>
+                                                <p>Find your dream home, browse listings, and connect with agents</p>
+                                                <button className="btn btn-primary role-btn">
+                                                    Register as Client
+                                                </button>
                                             </div>
-                                        </>
-                                    ) : (
+
+                                            <div className="role-card agent-card" onClick={() => handleRoleSelect('AGENT')}>
+                                                <div className="role-icon">👨‍💼</div>
+                                                <h3>I'm a Real Estate Agent</h3>
+                                                <p>List properties, manage clients, and grow your business</p>
+                                                <button className="btn btn-success role-btn">
+                                                    Register as Agent
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
                                         <div className="license-verification">
                                             <h2 className="role-title">Agent Verification</h2>
                                             <p className="role-subtitle">Please enter your real estate license number</p>
@@ -158,18 +168,18 @@ function Landing() {
                                                 </div>
                                             </div>
                                         </div>
-                                    )}
+                                    </>
+                                )}
 
-                                    <div className="login-prompt">
-                                        <p>Already have an account?
-                                            <button
-                                                className="btn btn-link login-link"
-                                                onClick={() => navigate('/login')}
-                                            >
-                                                Sign In
-                                            </button>
-                                        </p>
-                                    </div>
+                                <div className="login-prompt">
+                                    <p>Already have an account?
+                                        <button
+                                            className="btn btn-link login-link"
+                                            onClick={() => navigate('/login')}
+                                        >
+                                            Sign In
+                                        </button>
+                                    </p>
                                 </div>
                             </div>
                         </div>

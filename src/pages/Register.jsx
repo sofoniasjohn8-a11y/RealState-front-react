@@ -58,6 +58,10 @@ function Register() {
             setError('Passwords do not match');
             return false;
         }
+        if (formData.role === 'AGENT' && !formData.licenseNumber.trim()) {
+            setError('License number is required for agent registration');
+            return false;
+        }
         return true;
     };
 
@@ -86,26 +90,43 @@ function Register() {
                 registrationData.licenseNumber = formData.licenseNumber;
             }
 
-            await axios.post('http://localhost:8081/RealStatePro/register', registrationData, {
+            const response = await axios.post('http://localhost:8081/RealStatePro/register', registrationData, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
 
-            setSuccess('Registration successful! Redirecting to login...');
-            
+            const createdUserId = response.data?.userId;
+            const createdRole = response.data?.role;
+            setSuccess(`Registration successful! User ID ${createdUserId} created as ${createdRole || formData.role.toLowerCase()}. Redirecting to login...`);
             setFormData({
                 username: '',
                 email: '',
                 password: '',
-                confirmPassword: ''
+                confirmPassword: '',
+                role: 'CLIENT',
+                licenseNumber: ''
             });
 
             setTimeout(() => {
                 navigate('/login');
             }, 2000);
         } catch (err) {
-            setError(err.response?.data?.message || 'Registration failed. Please try again.');
+            const status = err.response?.status;
+            const serverMessage = err.response?.data?.message;
+
+            if (status === 409) {
+                setError(serverMessage || 'A user with that username or email already exists. Please choose a different username or login.');
+            } else if (status === 400) {
+                if (formData.role === 'AGENT') {
+                    setError(serverMessage || 'Agent registration requires a valid license number.');
+                } else {
+                    setError(serverMessage || 'Registration failed due to invalid input. Please check your information.');
+                }
+            } else {
+                setError(serverMessage || 'Registration failed. Please try again.');
+            }
+
             console.error('Registration error:', err);
         } finally {
             setLoading(false);

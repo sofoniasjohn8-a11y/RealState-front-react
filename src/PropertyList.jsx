@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from './contexts/AuthContext';
 import './styles/PropertyList.css';
 
 function PropertyList() {
@@ -8,25 +9,20 @@ function PropertyList() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const { user } = useAuth();
 
-    useEffect(() => {
-        const token = localStorage.getItem('authToken');
-        if (!token) {
-            navigate('/login');
-            return;
-        }
-
-        fetchProperties();
-    }, [navigate]);
-
-    const fetchProperties = async () => {
+    const fetchProperties = useCallback(async () => {
         try {
             setLoading(true);
             // Replace with your actual Servlet URL
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+            if (user?.token) {
+                headers['Authorization'] = `Bearer ${user.token}`;
+            }
             const response = await axios.get('http://localhost:8080/RealEstateBackend/properties', {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-                }
+                headers
             });
             setProperties(response.data);
             setError('');
@@ -36,7 +32,17 @@ function PropertyList() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [user?.token]);
+
+    useEffect(() => {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+
+        fetchProperties();
+    }, [navigate, fetchProperties]);
 
     const handleLogout = () => {
         localStorage.removeItem('authToken');

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../contexts/AuthContext';
 import '../styles/Login.css';
 
 function Login() {
@@ -11,6 +12,7 @@ function Login() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -43,7 +45,7 @@ function Login() {
                     token: response.data.token,
                     role: response.data.role
                 };
-                localStorage.setItem('user', JSON.stringify(userData));
+                login(userData);
 
                 // Role-based redirection
                 switch (response.data.role.toUpperCase()) {
@@ -53,7 +55,7 @@ function Login() {
                     case 'AGENT':
                         navigate('/agent/listings');
                         break;
-                    case 'CLIENT':
+                    case 'CUSTOMER':
                         navigate('/dashboard');
                         break;
                     default:
